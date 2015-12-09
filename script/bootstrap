@@ -15,5 +15,5 @@ cd "$(dirname "$0")/.."
 if bundle check 1>/dev/null 2>&1; then
   echo "Gem environment up-to-date"
 else
-  bundle install --binstubs --path vendor/gems "$@"
+  bundle install --path vendor/gems "$@"
 fi
