@@ -1,0 +1,15 @@
+/* doorbot.css */
+
+.ui-slider-handle {
+  outline: none;
+}
+
+.color-slider {
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 400px;
+}
+
+input.color-value {
+  width: 75px;
+}

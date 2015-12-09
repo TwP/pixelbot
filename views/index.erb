@@ -1,0 +1,77 @@
+<% content_for :head do %>
+  <script>
+    var brightness_req = null;
+    var color_req = null;
+
+    var get_color = function() {
+      return {
+        red:   $("#red").slider("value"),
+        green: $("#green").slider("value"),
+        blue:  $("#blue").slider("value")
+      };
+    };
+
+    $(document).ready(function() {
+      $(".color-slider").slider({
+        min: 0,
+        max: 255
+      });
+
+      $("#brightness").slider("option", "value", 255);
+
+      $("#brightness").on("slide", function(event, ui) {
+        if (brightness_req == null) {
+          brightness_req = $.post("/brightness",
+            { brightness: ui.value },
+            function( data, status, xhr ) {
+              $("#brightness-value").val(data.brightness);
+              brightness_req = null;
+            }
+          );
+        }
+      });
+
+      $.each(["#red", "#green", "#blue"], function(ii, value) {
+        $(value).on("slide", function(event, ui) {
+          if (color_req == null) {
+            var color = get_color();
+            color[value.substring(1)] = ui.value;
+            color_req = $.post("/set_color", color,
+              function( data, status, xhr ) {
+                $("#red-value").val(data.red);
+                $("#green-value").val(data.green);
+                $("#blue-value").val(data.blue);
+                color_req = null;
+              }
+            );
+          }
+        });
+      });
+    });
+  </script>
+<% end %>
+
+<table>
+<tbody>
+  <tr>
+    <td>Brightness</td>
+    <td><div id="brightness" class="color-slider"></div></td>
+    <td><input id="brightness-value" class="color-value" value="255"></td>
+  </tr>
+  <tr>
+    <td>Red</td>
+    <td><div id="red" class="color-slider"></div></td>
+    <td><input id="red-value" class="color-value"></td>
+  </tr>
+  <tr>
+    <td>Green</td>
+    <td><div id="green" class="color-slider"></div></td>
+    <td><input id="green-value" class="color-value"></td>
+  </tr>
+  <tr>
+    <td>Blue</td>
+    <td><div id="blue" class="color-slider"></div></td>
+    <td><input id="blue-value" class="color-value"></td>
+  </tr>
+</tbody>
+</table>
