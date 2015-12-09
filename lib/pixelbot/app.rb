@@ -21,7 +21,10 @@ module Pixelbot
     end
 
     get "/hello/delayed" do
-      EM.defer() { sleep 5 }
+      EM.defer do
+        sleep 5
+        puts "My work here is done"
+      end
       "I'm doing work in the background, but I am still free to take requests"
     end
   end
