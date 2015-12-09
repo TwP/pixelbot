@@ -11,7 +11,7 @@ module Pixelbot
   end
 
   def self.run( opts = {} )
-    EM.run do
+    EventMachine.run do
       server = opts.fetch(:server, "thin")
       host   = opts.fetch(:host,   "localhost")
       port   = opts.fetch(:port,   5000)
