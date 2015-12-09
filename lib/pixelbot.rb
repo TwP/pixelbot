@@ -1,6 +1,5 @@
 require "eventmachine"
 require "thin"
-require "pixelbot/app"
 
 module Pixelbot
   PATH = File.expand_path("../..", __FILE__).freeze
@@ -18,7 +17,7 @@ module Pixelbot
       port   = opts.fetch(:port,   5000)
 
       dispatch = Rack::Builder.app do
-        run lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] }
+        run Pixelbot::App.new
       end
 
       # NOTE that we have to use an EM-compatible web-server. There
@@ -45,3 +44,5 @@ module Pixelbot
     end
   end
 end
+
+require "pixelbot/app"
