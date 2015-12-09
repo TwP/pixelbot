@@ -22,7 +22,7 @@ module Pixelbot
 
     get "/hello/delayed" do
       EM.defer do
-        sleep 5
+        sleep(rand(5)+1)
         puts "My work here is done"
       end
       "I'm doing work in the background, but I am still free to take requests"
