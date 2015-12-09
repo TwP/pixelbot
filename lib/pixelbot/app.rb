@@ -13,7 +13,8 @@ module Pixelbot
     end
 
     get "/" do
-      "hello from '#{`uname -a`}'"
+      content_type :html
+      erb :index
     end
 
     post "/brightness" do
@@ -31,11 +32,6 @@ module Pixelbot
         :red   => get_value(:red),
         :green => get_value(:green),
         :blue  => get_value(:blue)
-    end
-
-    get "/tmp" do
-      content_type :html
-      erb :index
     end
 
     get "/hello" do
