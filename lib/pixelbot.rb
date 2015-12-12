@@ -1,5 +1,6 @@
 require "eventmachine"
 require "thin"
+require "pixel_pi"
 
 module Pixelbot
   PATH = File.expand_path("../..", __FILE__).freeze
@@ -10,6 +11,10 @@ module Pixelbot
     File.join(PATH, *args)
   end
 
+  def self.strip
+    @strip
+  end
+
   def self.run( opts = {} )
     EventMachine.run do
       server = opts.fetch(:server, "thin")
@@ -17,6 +22,7 @@ module Pixelbot
       port   = opts.fetch(:port,   5000)
 
       dispatch = Rack::Builder.app do
+        use Pixelbot::PixelBackend
         run Pixelbot::App.new
       end
 
@@ -35,9 +41,15 @@ module Pixelbot
         :Port    => port,
         :signals => false
 
+      @strip = Pixelbot::StrandTest.new(8, 18, :brightness => 255, :debug => true)
+      @strip.run
+
       #EM.add_periodic_timer(1) { puts "tick [#{Time.now}]" }
 
       trap "SIGINT" do
+        @strip.stop
+        @strip.strip.clear.show.close
+
         $stdout.puts "Stopping ..."
         EventMachine.stop
       end
@@ -46,3 +58,5 @@ module Pixelbot
 end
 
 require "pixelbot/app"
+require "pixelbot/pixel_backend"
+require "pixelbot/strandtest"

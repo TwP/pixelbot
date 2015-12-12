@@ -19,36 +19,49 @@ module Pixelbot
 
     post "/brightness" do
       content_type :json
+      if params[:brightness]
+        value = get_value(:brightness)
+        strip.brightness = value
+        strip.show unless strandtest.running?
 
-      response = params[:brightness] ?
-          {:brightness => get_value(:brightness)} : {}
-
-      MultiJson.dump response
+        MultiJson.dump({:brightness => value})
+      else
+        "{}"
+      end
     end
 
     post "/set_color" do
       content_type :json
+
+      red   = get_value(:red)
+      green = get_value(:green)
+      blue  = get_value(:blue)
+
+      strandtest.stop
+
+      strip.rotate(1).
+        set_pixel(strip.length - 1, red, green, blue).
+        show
+
       MultiJson.dump \
-        :red   => get_value(:red),
-        :green => get_value(:green),
-        :blue  => get_value(:blue)
+        :red   => red,
+        :green => green,
+        :blue  => blue
     end
 
-    get "/hello" do
-      "Hello World"
-    end
-
-    get "/hello/delayed" do
-      EM.defer do
-        sleep(rand(5)+1)
-        puts "My work here is done"
-      end
-      "I'm doing work in the background, but I am still free to take requests"
-    end
+  private
 
     def get_value( name )
       value = Integer(params[name])
       value = value.abs & 0xff
+    end
+
+    def strandtest
+      Pixelbot.strip
+    end
+
+    def strip
+      Pixelbot.strip.strip
     end
   end
 end
