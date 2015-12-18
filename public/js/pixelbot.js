@@ -1,4 +1,5 @@
 
+var brightness_request = null;
 var color_request = null;
 
 var getColor = function() {
@@ -31,11 +32,19 @@ var RGBChange = function() {
 };
 
 var getBrightness = function() {
-  i.getValue();
+  return i.getValue();
+};
+
+var setBrightness = function( brightness ) {
+  i.setValue(brightness);
 };
 
 var BrightnessChange = function() {
-  var brightness = getBrightness();
+  if (brightness_request == null) {
+    brightness_request = $.post("/brightness", { brightness: getBrightness() },
+      function( data, status, xhr ) { brightness_request = null; }
+    );
+  }
 };
 
 var r = $('#R').slider()
