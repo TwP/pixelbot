@@ -1,21 +1,28 @@
 require "eventmachine"
 require "thin"
 require "pixel_pi"
+require "yaml"
 
 module Pixelbot
+  extend self
+
   PATH = File.expand_path("../..", __FILE__).freeze
   LIBPATH = File.join(PATH, "lib").freeze
 
-  def self.path( *args )
+  def path( *args )
     return PATH if args.empty?
     File.join(PATH, *args)
   end
 
-  def self.strip
+  def strip
     @strip
   end
 
-  def self.run( opts = {} )
+  def config
+    @config = YAML.load_file(path("pixelbot.yml")) rescue {}
+  end
+
+  def run( opts = {} )
     EventMachine.run do
       server = opts.fetch(:server, "thin")
       host   = opts.fetch(:host,   "localhost")
@@ -41,7 +48,12 @@ module Pixelbot
         :Port    => port,
         :signals => false
 
-      @strip = Pixelbot::StrandTest.new(8, 18, :brightness => 255, :debug => true)
+      @strip = Pixelbot::StrandTest.new \
+        config.fetch("leds", 8),
+        config.fetch("gpio", 18),
+        :brightness => config.fetch("brightness", 255),
+        :debug      => true
+
       @strip.run
 
       #EM.add_periodic_timer(1) { puts "tick [#{Time.now}]" }

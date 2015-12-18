@@ -1,0 +1,4 @@
+---
+leds:         8  # number of pixels being used
+gpio:        18  # GPIO pin used to communicate with the pixels
+brightness: 255  # initial brightness level
