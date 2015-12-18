@@ -1,44 +1,6 @@
-<% content_for :end_of_body do %>
-  <script>
-    var brightness_req = null;
-    var color_req = null;
-
-    var get_color = function() {
-      return {
-        red:   $("#red").slider("value"),
-        green: $("#green").slider("value"),
-        blue:  $("#blue").slider("value")
-      };
-    };
-
-    $(document).ready(function() {
-      $(".color-slider").slider({
-        min: 0,
-        max: 255
-      });
-
-      $("#brightness").slider("option", "value", 255);
-
-      $("#brightness").on("slide", function(event, ui) {
-        if (brightness_req == null) {
-          brightness_req = $.post("/brightness",
-            { brightness: ui.value },
-            function( data, status, xhr ) {
-              $("#brightness-value").val(data.brightness);
-              brightness_req = null;
-            }
-          );
-        }
-      });
-
-    });
-  </script>
-<% end %>
-
 <div class="page-header">
   <h1>Pixelbot</h1>
 </div>
-
 <div class="well clearfix">
   <div class="col-md-4 column">
     <p>
@@ -62,4 +24,3 @@
     <div id="RGB"></div>
   </div>
 </div>
-
