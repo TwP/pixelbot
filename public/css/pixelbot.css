@@ -1,6 +1,10 @@
 #RGB {
-  height: 20px;
+  height: 35px;
   background: rgb(128, 128, 128);
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .15);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .15);
 }
 #RC .slider-selection {
   background: #FF8282;
@@ -9,7 +13,7 @@
   background: red;
 }
 #GC .slider-selection {
-  background: #428041;
+  background: #65B063;
 }
 #GC .slider-handle {
   background: green;
@@ -20,7 +24,13 @@
 #BC .slider-handle {
   background: blue;
 }
-#R, #G, #B {
+#IC .slider-selection {
+  background: #C6C6C6;
+}
+#IC .slider-handle {
+  background: grey;
+}
+#R, #G, #B, #I {
   width: 300px;
 }
 .slider.slider-horizontal {

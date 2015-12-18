@@ -1,14 +1,55 @@
 
+var color_request = null;
+
+var getColor = function() {
+  return {
+    red:   r.getValue(),
+    green: g.getValue(),
+    blue:  b.getValue()
+  };
+};
+
+var setColor = function( color ) {
+  r.setValue(color.red);
+  g.setValue(color.green);
+  b.setValue(color.blue);
+  showColor(color);
+};
+
+var showColor = function( color ) {
+  $('#RGB').css('background', 'rgb('+color.red+','+color.green+','+color.blue+')');
+};
+
 var RGBChange = function() {
-  $('#RGB').css('background', 'rgb('+r.getValue()+','+g.getValue()+','+b.getValue()+')')
+  var color = getColor();
+  showColor(color);
+  if (color_request == null) {
+    color_request = $.post("/set_color", color,
+      function( data, status, xhr ) { color_request = null; }
+    );
+  }
+};
+
+var getBrightness = function() {
+  i.getValue();
+};
+
+var BrightnessChange = function() {
+  var brightness = getBrightness();
 };
 
 var r = $('#R').slider()
-          .on('slide', RGBChange)
+          .on('change', RGBChange)
           .data('slider');
+
 var g = $('#G').slider()
-          .on('slide', RGBChange)
+          .on('change', RGBChange)
           .data('slider');
+
 var b = $('#B').slider()
-          .on('slide', RGBChange)
+          .on('change', RGBChange)
+          .data('slider');
+
+var i = $('#I').slider()
+          .on('change', BrightnessChange)
           .data('slider');
