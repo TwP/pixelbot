@@ -1,12 +1,9 @@
 require "sinatra/base"
-require "sinatra/content_for"
 require "tilt/erb"
 require "multi_json"
 
 module Pixelbot
   class App < Sinatra::Base
-    helpers Sinatra::ContentFor
-
     configure do
       set :threaded, false
       set :public_dir, Pixelbot.path("public")
@@ -20,11 +17,10 @@ module Pixelbot
 
     post "/brightness" do
       content_type :json
+
       if params[:brightness]
         value = get_value(:brightness)
-        leds.brightness = value
-        leds.show unless lightshow.running?
-
+        Pixelbot.set_brightness(value)
         MultiJson.dump({:brightness => value})
       else
         "{}"
@@ -34,20 +30,9 @@ module Pixelbot
     post "/set_color" do
       content_type :json
 
-      red   = get_value(:red)
-      green = get_value(:green)
-      blue  = get_value(:blue)
-
-      lightshow.stop
-
-      leds.rotate(1).
-        set_pixel(leds.length - 1, red, green, blue).
-        show
-
-      MultiJson.dump \
-        :red   => red,
-        :green => green,
-        :blue  => blue
+      color = get_color
+      Pixelbot.set_color(color)
+      MultiJson.dump(color)
     end
 
   private
@@ -62,14 +47,6 @@ module Pixelbot
     def get_value( name )
       value = Integer(params[name])
       value = value.abs & 0xff
-    end
-
-    def lightshow
-      Pixelbot.lightshow
-    end
-
-    def leds
-      Pixelbot.leds
     end
   end
 end

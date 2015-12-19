@@ -84,6 +84,19 @@ module Pixelbot
     $stdout.puts "Stopping ..."
     EventMachine.stop
   end
+
+  def set_color( color )
+    lightshow.stop
+    leds.
+      rotate(1).
+      set_pixel(leds.length-1, color.red, color.green, color.blue).
+      show
+  end
+
+  def set_brightness( brightness )
+    leds.brightness = brightness
+    leds.show unless lightshow.running?
+  end
 end
 
 require "pixelbot/app"
