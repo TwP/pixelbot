@@ -47,7 +47,7 @@ module Pixelbot
       port   = opts.fetch(:port,   5000)
 
       dispatch = Rack::Builder.app do
-        use Pixelbot::PixelBackend
+        use Pixelbot::Pusher
         run Pixelbot::App.new
       end
 
@@ -101,4 +101,4 @@ end
 
 require "pixelbot/app"
 require "pixelbot/lightshow"
-require "pixelbot/pixel_backend"
+require "pixelbot/pusher"
