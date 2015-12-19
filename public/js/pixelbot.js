@@ -62,3 +62,13 @@ var b = $('#B').slider()
 var i = $('#I').slider()
           .on('change', BrightnessChange)
           .data('slider');
+
+// configure the WebSocket code
+var scheme = 'ws://';
+var uri    = scheme + window.document.location.host + '/';
+var ws     = new WebSocket(uri);
+
+ws.onmessage = function(message) {
+  var data = JSON.parse(message.data);
+  console.log('data is: ' + 'data');
+}

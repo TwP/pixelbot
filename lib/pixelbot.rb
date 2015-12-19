@@ -47,8 +47,9 @@ module Pixelbot
       port   = opts.fetch(:port,   5000)
 
       dispatch = Rack::Builder.app do
+        Faye::WebSocket.load_adapter("thin")
         use Pixelbot::Pusher
-        run Pixelbot::App.new
+        run Pixelbot::App
       end
 
       # NOTE that we have to use an EM-compatible web-server. There
