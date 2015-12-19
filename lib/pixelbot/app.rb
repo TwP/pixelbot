@@ -1,5 +1,6 @@
 require "sinatra/base"
 require "sinatra/content_for"
+require "tilt/erb"
 require "multi_json"
 
 module Pixelbot
@@ -21,8 +22,8 @@ module Pixelbot
       content_type :json
       if params[:brightness]
         value = get_value(:brightness)
-        strip.brightness = value
-        strip.show unless strandtest.running?
+        leds.brightness = value
+        leds.show unless lightshow.running?
 
         MultiJson.dump({:brightness => value})
       else
@@ -37,10 +38,10 @@ module Pixelbot
       green = get_value(:green)
       blue  = get_value(:blue)
 
-      strandtest.stop
+      lightshow.stop
 
-      strip.rotate(1).
-        set_pixel(strip.length - 1, red, green, blue).
+      leds.rotate(1).
+        set_pixel(leds.length - 1, red, green, blue).
         show
 
       MultiJson.dump \
@@ -51,17 +52,24 @@ module Pixelbot
 
   private
 
+    def get_color
+      Pixelbot::Color.new \
+        get_value(:red),
+        get_value(:green),
+        get_value(:blue)
+    end
+
     def get_value( name )
       value = Integer(params[name])
       value = value.abs & 0xff
     end
 
-    def strandtest
-      Pixelbot.strip
+    def lightshow
+      Pixelbot.lightshow
     end
 
-    def strip
-      Pixelbot.strip.strip
+    def leds
+      Pixelbot.leds
     end
   end
 end

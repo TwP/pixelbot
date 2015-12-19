@@ -9,17 +9,35 @@ module Pixelbot
   PATH = File.expand_path("../..", __FILE__).freeze
   LIBPATH = File.join(PATH, "lib").freeze
 
+  Color = Struct.new(:red, :green, :blue) do
+    def to_json( *args )
+      MultiJson.dump(self.to_h)
+    end
+  end
+
   def path( *args )
     return PATH if args.empty?
     File.join(PATH, *args)
   end
 
-  def strip
-    @strip
+  def config
+    @config ||= YAML.load_file(path("pixelbot.yml")) rescue {}
   end
 
-  def config
-    @config = YAML.load_file(path("pixelbot.yml")) rescue {}
+  def leds
+    @leds ||= PixelPi::Leds.new \
+        config.fetch("leds", 8),
+        config.fetch("gpio", 18),
+        :brightness => config.fetch("brightness", 255),
+        :debug      => true
+  end
+
+  def lightshow
+    @lightshow ||= Pixelbot::Lightshow.new leds
+  end
+
+  def clients
+    @clients ||= []
   end
 
   def run( opts = {} )
@@ -48,27 +66,26 @@ module Pixelbot
         :Port    => port,
         :signals => false
 
-      @strip = Pixelbot::StrandTest.new \
-        config.fetch("leds", 8),
-        config.fetch("gpio", 18),
-        :brightness => config.fetch("brightness", 255),
-        :debug      => true
-
-      @strip.run
+      lightshow.run
 
       #EM.add_periodic_timer(1) { puts "tick [#{Time.now}]" }
 
       trap "SIGINT" do
-        @strip.stop
-        @strip.strip.clear.show.close
-
-        $stdout.puts "Stopping ..."
-        EventMachine.stop
+        stop!
       end
     end
+  end
+
+  def stop!
+    lightshow.stop
+    leds.clear.show
+    leds.close
+
+    $stdout.puts "Stopping ..."
+    EventMachine.stop
   end
 end
 
 require "pixelbot/app"
+require "pixelbot/lightshow"
 require "pixelbot/pixel_backend"
-require "pixelbot/strandtest"

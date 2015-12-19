@@ -1,29 +1,23 @@
-require "forwardable"
-
 module Pixelbot
-  class StrandTest
-    extend Forwardable
-
+  class Lightshow
     Halt = Class.new(StandardError)
 
     SLEEP = 60   # seconds
 
-    def initialize( count, pin, opts = {} )
-      @strip = PixelPi::Leds.new(count, pin, opts)
+    def initialize( leds )
+      @leds    = leds
       @running = false
-      @stop = nil
+      @stop    = nil
     end
 
-    def_delegators :@strip, :brightness, :brightness=
-
-    attr_reader :strip
+    attr_reader   :leds
     attr_accessor :wait_ms
 
     def run
       if @stop.nil?
         EM.next_tick do
           EM.defer do
-            lightshow
+            perform
             run
           end
         end
@@ -50,13 +44,7 @@ module Pixelbot
       @stop = Time.now + SLEEP
     end
 
-    def close
-      strip.clear.show
-      strip.close
-      self
-    end
-
-    def lightshow
+    def perform
       @running = true
 
       # Color wipe animations
@@ -67,7 +55,7 @@ module Pixelbot
 
       # Theater chase animations
       self.wait_ms = 100
-      strip.clear
+      leds.clear
       theater_chase(PixelPi::Color(255, 255, 255))  # white theater chase
       theater_chase(PixelPi::Color(255,   0,   0))  # red theater chase
       theater_chase(PixelPi::Color(  0,   0, 255))  # blue theater chase
@@ -94,9 +82,9 @@ module Pixelbot
     def color_wipe( color, opts = {} )
       wait_ms = opts.fetch(:wait_ms, self.wait_ms)
 
-      strip.length.times do |num|
-        strip[num] = color
-        strip.show
+      leds.length.times do |num|
+        leds[num] = color
+        leds.show
         sleep(wait_ms / 1000.0)
       end
 
@@ -119,9 +107,9 @@ module Pixelbot
 
       iterations.times do
         spacing.times do |sp|
-          strip.clear
-          (sp...strip.length).step(spacing) { |ii| strip[ii] = color }
-          strip.show
+          leds.clear
+          (sp...leds.length).step(spacing) { |ii| leds[ii] = color }
+          leds.show
           sleep(wait_ms / 1000.0)
         end
       end
@@ -159,8 +147,8 @@ module Pixelbot
       iterations = opts.fetch(:iterations, 1)
 
       (0...256*iterations).each do |jj|
-        strip.fill { |ii| wheel(ii+jj) }
-        strip.show
+        leds.fill { |ii| wheel(ii+jj) }
+        leds.show
         sleep(wait_ms / 1000.0)
       end
 
@@ -179,8 +167,8 @@ module Pixelbot
       iterations = opts.fetch(:iterations, 5)
 
       (0...256*iterations).each do |jj|
-        strip.fill { |ii| wheel((ii * 256 / strip.length) + jj) }
-        strip.show
+        leds.fill { |ii| wheel((ii * 256 / leds.length) + jj) }
+        leds.show
         sleep(wait_ms / 1000.0)
       end
 
@@ -200,9 +188,9 @@ module Pixelbot
 
       256.times do |jj|
         spacing.times do |sp|
-          strip.clear
-          (sp...strip.length).step(spacing) { |ii| strip[ii] = wheel((ii+jj) % 255) }
-          strip.show
+          leds.clear
+          (sp...leds.length).step(spacing) { |ii| leds[ii] = wheel((ii+jj) % 255) }
+          leds.show
           sleep(wait_ms / 1000.0)
         end
       end
