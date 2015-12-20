@@ -93,6 +93,8 @@ module Pixelbot
       set_pixel(leds.length-1, color.red, color.green, color.blue).
       show
 
+    settings[:color] = color
+
     msg = MultiJson.dump({:color => color})
     clients.each { |client| client.send(msg) }
 
@@ -103,11 +105,21 @@ module Pixelbot
     leds.brightness = brightness
     leds.show unless lightshow.running?
 
+    settings[:brightness] = brightness
+
     msg = %Q({"brightness": #{brightness}})
     clients.each { |client| client.send(msg) }
 
     nil
   end
+
+  def settings
+    @settings ||= {
+      :brightness => 255,
+      :color => Pixelbot::Color.new(128,128,128)
+    }
+  end
+
 end
 
 require "pixelbot/app"

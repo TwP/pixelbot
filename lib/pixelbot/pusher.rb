@@ -21,6 +21,7 @@ module Pixelbot
         ws.on :open do |event|
           # p [:open, ws.object_id]
           clients << ws
+          ws.send(MultiJson.dump(Pixelbot.settings))
         end
 
         ws.on :message do |event|
