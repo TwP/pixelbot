@@ -11,7 +11,7 @@ module Pixelbot
 
   Color = Struct.new(:red, :green, :blue) do
     def to_json( *args )
-      MultiJson.dump(self.to_h)
+      %Q({"red":#{red},"green":#{green},"blue":#{blue}})
     end
   end
 
