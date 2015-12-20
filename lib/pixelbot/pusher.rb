@@ -19,16 +19,16 @@ module Pixelbot
       if Faye::WebSocket.websocket?(env)
         ws = Faye::WebSocket.new(env, nil, {ping: KEEPALIVE_TIME })
         ws.on :open do |event|
-          p [:open, ws.object_id]
+          # p [:open, ws.object_id]
           clients << ws
         end
 
         ws.on :message do |event|
-          p [:message, event.data]
+          # p [:message, event.data]
         end
 
         ws.on :close do |event|
-          p [:close, ws.object_id, event.code, event.reason]
+          # p [:close, ws.object_id, event.code, event.reason]
           clients.delete(ws)
           ws = nil
         end

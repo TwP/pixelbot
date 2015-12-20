@@ -92,11 +92,21 @@ module Pixelbot
       rotate(1).
       set_pixel(leds.length-1, color.red, color.green, color.blue).
       show
+
+    msg = MultiJson.dump({:color => color})
+    clients.each { |client| client.send(msg) }
+
+    nil
   end
 
   def set_brightness( brightness )
     leds.brightness = brightness
     leds.show unless lightshow.running?
+
+    msg = %Q({"brightness": #{brightness}})
+    clients.each { |client| client.send(msg) }
+
+    nil
   end
 end
 

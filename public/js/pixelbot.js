@@ -11,10 +11,12 @@ var getColor = function() {
 };
 
 var setColor = function( color ) {
-  r.setValue(color.red);
-  g.setValue(color.green);
-  b.setValue(color.blue);
-  showColor(color);
+  if (color_request == null) {
+    r.setValue(color.red);
+    g.setValue(color.green);
+    b.setValue(color.blue);
+    showColor(color);
+  }
 };
 
 var showColor = function( color ) {
@@ -36,7 +38,9 @@ var getBrightness = function() {
 };
 
 var setBrightness = function( brightness ) {
-  i.setValue(brightness);
+  if (brightness_request == null) {
+    i.setValue(brightness);
+  }
 };
 
 var BrightnessChange = function() {
@@ -70,5 +74,10 @@ var ws     = new WebSocket(uri);
 
 ws.onmessage = function(message) {
   var data = JSON.parse(message.data);
-  console.log('data is: ' + 'data');
+  if (data.hasOwnProperty('brightness')) {
+    setBrightness(data.brightness);
+  }
+  if (data.hasOwnProperty('color')) {
+    setColor(data.color);
+  }
 }
