@@ -1,4 +1,10 @@
 ---
-leds:         8  # number of pixels being used
-gpio:        18  # GPIO pin used to communicate with the pixels
-brightness: 255  # initial brightness level
+pixels:
+  leds:         8  # Number of pixels being used
+  gpio:        18  # GPIO pin used to communicate with the pixels
+  brightness: 255  # Initial brightness level
+  invert:   false  # True to invert the signal (when using NPN transistor level shift)
+
+server:
+  host: "localhost"
+  port: 5000

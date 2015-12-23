@@ -1,7 +1,6 @@
 require "eventmachine"
 require "thin"
 require "pixel_pi"
-require "yaml"
 
 module Pixelbot
   extend self
@@ -21,14 +20,14 @@ module Pixelbot
   end
 
   def config
-    @config ||= YAML.load_file(path("pixelbot.yml")) rescue {}
+    @config ||= Configuration.new
   end
 
   def leds
     @leds ||= PixelPi::Leds.new \
-        config.fetch("leds", 8),
-        config.fetch("gpio", 18),
-        :brightness => config.fetch("brightness", 255),
+        config.leds, config.gpio,
+        :brightness => config.brightness,
+        :invert     => config.invert,
         :debug      => true
   end
 
@@ -40,12 +39,8 @@ module Pixelbot
     @clients ||= []
   end
 
-  def run( opts = {} )
+  def run( server = "thing" )
     EventMachine.run do
-      server = opts.fetch(:server, "thin")
-      host   = opts.fetch(:host,   "localhost")
-      port   = opts.fetch(:port,   5000)
-
       dispatch = Rack::Builder.app do
         Faye::WebSocket.load_adapter("thin")
         use Pixelbot::Pusher
@@ -63,8 +58,8 @@ module Pixelbot
       Rack::Server.start \
         :app     => dispatch,
         :server  => server,
-        :Host    => host,
-        :Port    => port,
+        :Host    => config.host,
+        :Port    => config.port,
         :signals => false
 
       lightshow.run
@@ -119,9 +114,9 @@ module Pixelbot
       :color => Pixelbot::Color.new(128,128,128)
     }
   end
-
 end
 
 require "pixelbot/app"
+require "pixelbot/configuration"
 require "pixelbot/lightshow"
 require "pixelbot/pusher"

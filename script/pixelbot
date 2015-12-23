@@ -6,6 +6,4 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'bundler/setup'
 require "pixelbot"
 
-Pixelbot.run \
-  :host => "localhost",
-  :port => 5000
+Pixelbot.run
