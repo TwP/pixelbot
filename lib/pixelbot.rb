@@ -39,10 +39,12 @@ module Pixelbot
     @clients ||= []
   end
 
-  def run( server = "thing" )
+  def run
     EventMachine.run do
+      server = "thin"
+
       dispatch = Rack::Builder.app do
-        Faye::WebSocket.load_adapter("thin")
+        Faye::WebSocket.load_adapter(server)
         use Pixelbot::Pusher
         run Pixelbot::App
       end
