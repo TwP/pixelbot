@@ -53,3 +53,5 @@ and the fake LEDs are automatically used where needed.
 The fake LEDs are displayed in the terminal using a UTF-8 fisheye "◉" character,
 and the fake LEDs are colorized using the [rainbow]() gem. So you can work with
 the LEDs even when a RaspberryPi is not handy.
+
+![](/public/images/pixelbot.gif)
