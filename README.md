@@ -2,7 +2,7 @@
 
 A small ruby web service for controlling
 [NeoPixels](https://www.adafruit.com/category/168) attached to a
-[Raspberry Pi](http://www.raspberrypi.org).
+[RaspberryPi](http://www.raspberrypi.org).
 
 # Is it any good?
 
@@ -10,7 +10,7 @@ Yes.
 
 # How do I run it?
 
-Clone the repository to you RaspberryPi, and install all the dependencies:
+Clone the repository to your RaspberryPi, and install all the dependencies:
 
 ```sh
 git clone https://github.com/TwP/pixelbot.git
