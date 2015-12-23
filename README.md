@@ -19,10 +19,10 @@ script/bootstrap
 ```
 
 Open the `pixelbot.yml` file in your favorite editor and set the number of
-`leds` to the number of neopixels you have connected to your RaspberryPi. Set
-the `gpio` pin number to match the GPIO pin where the neopixels are connected to
+`leds` to the number of NeoPixels you have connected to your RaspberryPi. Set
+the `gpio` pin number to match the GPIO pin where the NeoPixels are connected to
 your RaspberryPi. Please read the [RaspberryPi NeoPixel guide](https://learn.adafruit.com/neopixels-on-raspberry-pi/overview)
-from Adafruit for all the details on setting up your neopixel circuit.
+from Adafruit for all the details on setting up your NeoPixel circuit.
 
 To start the web service run:
 
@@ -30,7 +30,7 @@ To start the web service run:
 sudo script/pixelbot
 ```
 
-Enjoy the blinken lights!
+Enjoy the blinkenlights!
 
 # It won't run!
 
@@ -46,11 +46,10 @@ NeoPixels, your code will need to be run as the super user.
 You're in luck!
 
 When running on an architecture other than `linux-arm` (the RaspberryPi
-architecture), a fake LEDs class is used to simulate the neopixels. This set of
+architecture), a fake LEDs class is used to simulate the NeoPixels. This set of
 fake LEDs is provided by the [pixel_pi](https://github.com/TwP/pixel_pi) gem,
 and the fake LEDs are automatically used where needed.
 
 The fake LEDs are displayed in the terminal using a UTF-8 fisheye "◉" character,
 and the fake LEDs are colorized using the [rainbow]() gem. So you can work with
 the LEDs even when a Raspberry PI is not handy.
-
