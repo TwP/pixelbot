@@ -47,15 +47,15 @@ module Pixelbot
     def perform
       @running = true
 
+      inside_out
+
       # Color wipe animations
-      self.wait_ms = 75
       color_wipe(PixelPi::Color(255, 0, 0))  # red color wipe
       color_wipe(PixelPi::Color(0, 255, 0))  # green color wipe
       color_wipe(PixelPi::Color(0, 0, 255))  # blue color wipe
 
       # Theater chase animations
       self.wait_ms = 100
-      leds.clear
       theater_chase(PixelPi::Color(255, 255, 255))  # white theater chase
       theater_chase(PixelPi::Color(255,   0,   0))  # red theater chase
       theater_chase(PixelPi::Color(  0,   0, 255))  # blue theater chase
@@ -78,10 +78,11 @@ module Pixelbot
     # opts  - The options Hash
     #   :wait_ms - sleep time between pixel updates
     #
-    # Returns this PixelPi::Leds instance.
+    # Returns this Lightshow instance.
     def color_wipe( color, opts = {} )
-      wait_ms = opts.fetch(:wait_ms, self.wait_ms)
+      wait_ms = opts.fetch(:wait_ms, 1000.0/leds.length)
 
+      leds.clear
       leds.length.times do |num|
         leds[num] = color
         leds.show
@@ -99,7 +100,7 @@ module Pixelbot
     #   :iterations - number of iterations (defaults to 10)
     #   :spacing    - spacing between lights (defaults to 3)
     #
-    # Returns this PixelPi::Leds instance.
+    # Returns this Lightshow  instance.
     def theater_chase( color, opts = {} )
       wait_ms    = opts.fetch(:wait_ms, self.wait_ms)
       iterations = opts.fetch(:iterations, 10)
@@ -141,7 +142,7 @@ module Pixelbot
     #   :wait_ms    - sleep time between pixel updates
     #   :iterations - number of iterations (defaults to 1)
     #
-    # Returns this PixelPi::Leds instance.
+    # Returns this Lightshow  instance.
     def rainbow( opts = {} )
       wait_ms    = opts.fetch(:wait_ms, self.wait_ms)
       iterations = opts.fetch(:iterations, 1)
@@ -161,7 +162,7 @@ module Pixelbot
     #   :wait_ms    - sleep time between pixel updates
     #   :iterations - number of iterations (defaults to 5)
     #
-    # Returns this PixelPi::Leds instance.
+    # Returns this Lightshow  instance.
     def rainbow_cycle( opts = {} )
       wait_ms    = opts.fetch(:wait_ms, self.wait_ms)
       iterations = opts.fetch(:iterations, 5)
@@ -181,7 +182,7 @@ module Pixelbot
     #   :wait_ms - sleep time between pixel updates
     #   :spacing - spacing between lights (defaults to 3)
     #
-    # Returns this PixelPi::Leds instance.
+    # Returns this Lightshow  instance.
     def theater_chase_rainbow( opts = {} )
       wait_ms = opts.fetch(:wait_ms, self.wait_ms)
       spacing = opts.fetch(:spacing, 3)
@@ -190,6 +191,36 @@ module Pixelbot
         spacing.times do |sp|
           leds.clear
           (sp...leds.length).step(spacing) { |ii| leds[ii] = wheel((ii+jj) % 255) }
+          leds.show
+          sleep(wait_ms / 1000.0)
+        end
+      end
+
+      self
+    end
+
+    # Light single pixels starting in the middle and working outwards.
+    #
+    # opts - The options Hash
+    #   :wait_ms    - sleep time between pixel updates
+    #   :iterations - number of iterations (defaults to 5)
+    #
+    # Returns this Lightshow  instance.
+    def inside_out( opts = {} )
+      wait_ms    = opts.fetch(:wait_ms, 2000.0/leds.length)
+      iterations = opts.fetch(:iterations, 5)
+      middle     = (leds.length / 2.0).floor
+
+      scale = (255.0 / leds.length).floor
+
+      iterations.times do
+        (middle...leds.length).each do |ii|
+          jj = (leds.length-1) % ii
+          jj = ii if ii == middle && jj == 0
+
+          leds.clear
+          leds[ii] = wheel(ii*scale)
+          leds[jj] = wheel(jj*scale)
           leds.show
           sleep(wait_ms / 1000.0)
         end
