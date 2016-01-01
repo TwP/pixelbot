@@ -47,7 +47,11 @@ module Pixelbot
     def perform
       @running = true
 
-      inside_out
+      n = 15
+      n.times do |ii|
+        color = wheel((ii+1)*255/n)
+        inside_out(color, :iterations => 1)
+      end
 
       # Color wipe animations
       color_wipe(PixelPi::Color(255, 0, 0))  # red color wipe
@@ -201,26 +205,24 @@ module Pixelbot
 
     # Light single pixels starting in the middle and working outwards.
     #
-    # opts - The options Hash
+    # color - The 24-bit RGB color value
+    # opts  - The options Hash
     #   :wait_ms    - sleep time between pixel updates
     #   :iterations - number of iterations (defaults to 5)
     #
     # Returns this Lightshow  instance.
-    def inside_out( opts = {} )
+    def inside_out( color, opts = {} )
       wait_ms    = opts.fetch(:wait_ms, 2000.0/leds.length)
       iterations = opts.fetch(:iterations, 5)
       middle     = (leds.length / 2.0).floor
 
-      scale = (255.0 / leds.length).floor
-
       iterations.times do
+        leds.clear
         (middle...leds.length).each do |ii|
           jj = (leds.length-1) % ii
           jj = ii if ii == middle && jj == 0
 
-          leds.clear
-          leds[ii] = wheel(ii*scale)
-          leds[jj] = wheel(jj*scale)
+          leds[ii] = leds[jj] = color
           leds.show
           sleep(wait_ms / 1000.0)
         end
