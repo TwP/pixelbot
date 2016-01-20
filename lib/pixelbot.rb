@@ -41,24 +41,18 @@ module Pixelbot
 
   def run
     EventMachine.run do
-      server = "thin"
+      server = "thin"  # could also use "hatetepe" or "goliath"
 
-      dispatch = Rack::Builder.app do
+      app = Rack::Builder.app do
         Faye::WebSocket.load_adapter(server)
         use Pixelbot::Pusher
         run Pixelbot::App
       end
 
-      # NOTE that we have to use an EM-compatible web-server. There
-      # might be more, but these are some that are currently available.
-      unless %w[thin hatetepe goliath].include? server
-        raise "Need an EM webserver, but #{server.inspect} isn't"
-      end
-
       # Start the web server. Note that you are free to run other tasks
       # within your EM instance.
       Rack::Server.start \
-        :app     => dispatch,
+        :app     => app,
         :server  => server,
         :Host    => config.host,
         :Port    => config.port,
@@ -66,11 +60,7 @@ module Pixelbot
 
       lightshow.run
 
-      #EM.add_periodic_timer(1) { puts "tick [#{Time.now}]" }
-
-      trap "SIGINT" do
-        stop!
-      end
+      trap("SIGINT") { stop! }
     end
   end
 
